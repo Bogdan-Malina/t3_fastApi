@@ -1,12 +1,17 @@
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.wsgi import WSGIMiddleware
+
 from sqlalchemy.orm import Session
 
-from . import crud, models, schemas
-from .database import SessionLocal, engine
+from sql_app import crud, models, schemas
+from sql_app.database import SessionLocal, engine
+
+from sql_app.admin import create_flask
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+app.mount("/admin", WSGIMiddleware(create_flask(SessionLocal())))
 
 
 # Dependency
@@ -17,6 +22,41 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+
+@app.get("/store/", response_model=list[schemas.Store])
+def read_store(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    stores = crud.get_stores(db, skip=skip, limit=limit)
+    return stores
+
+
+@app.post("/store/", response_model=schemas.Store)
+def create_user(store: schemas.StoreCreate, db: Session = Depends(get_db)):
+    # db_store = crud.get_user_by_email(db, email=user.email)
+    # if db_store:
+    #     raise HTTPException(status_code=400, detail="Email already registered")
+    return crud.create_store(db=db, store=store)
+
+@app.get("/worker/", response_model=list[schemas.Worker])
+def read_worker(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    worker = crud.get_workers(db, skip=skip, limit=limit)
+    return worker
+
+
+@app.post("/worker/", response_model=schemas.Worker)
+def create_worker(worker: schemas.WorkerCreate, db: Session = Depends(get_db)):
+    # db_store = crud.get_user_by_email(db, email=user.email)
+    # if db_store:
+    #     raise HTTPException(status_code=400, detail="Email already registered")
+    return crud.create_worker(db=db, worker=worker)
+
+
+# @app.get("/admin/")
+# def get_admin(db: Session = Depends(get_db)):
+#     pass
+
+
 
 
 @app.post("/users/", response_model=schemas.User)
