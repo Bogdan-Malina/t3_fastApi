@@ -5,8 +5,8 @@ from sql_app.models import Worker, Store, Customer, Order, Visit
 
 
 class WorkerView(ModelView):
-    column_list = ('id', 'name', 'phone_number', 'store.name')
-    column_searchable_list = ('name', 'phone_number', 'store.name')
+    column_list = ('id', 'name', 'phone_number', 'stores')
+    column_searchable_list = ('name', 'phone_number')
     column_filters = ('id', 'name')
 
 
@@ -17,7 +17,7 @@ class StoreView(ModelView):
 
 
 class CustomerView(ModelView):
-    column_list = ('id', 'name', 'phone_number')
+    column_list = ('id', 'name', 'phone_number', 'stores')
     column_searchable_list = ('name', 'phone_number')
     column_filters = ('id', 'name')
 
