@@ -76,18 +76,70 @@ def create_worker(db: Session, worker: schemas.WorkerCreate):
 #     db.refresh(db_item)
 #     return db_item
 def get_stores_by_phone(phone, db, skip, limit):
-    try:
-        worker = db.query(models.Worker).filter(models.Worker.phone_number == phone).first()
+    worker = (
+        db.query(models.Worker)
+        .filter(models.Worker.phone_number == phone)
+        .first()
+    )
+    if worker:
         stores = worker.stores
-        print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
-        print(stores)
         return stores
-    except AttributeError as e:
-        print("Worker not found")
+    else:
+        return []
 
 
 def get_orders_by_phone(phone, db, skip, limit):
-    orders = db.query(models.Order).offset(skip).limit(limit).all()
-    print(type(orders[0].status))
-    return orders
-#  [<sql_app.models.Customer object at 0x7fa34e283fd0>]
+    customer = (
+        db.query(models.Customer)
+        .filter(models.Customer.phone_number == phone)
+        .first()
+    )
+    if customer:
+        orders = (
+            db.query(models.Order)
+            .filter(models.Order.author == customer)
+            .all()
+        )
+        return orders
+    else:
+        return []
+
+
+def post_order_by_phone(phone, db, order):
+    try:
+        author = (
+            db.query(models.Customer)
+            .filter(models.Customer.phone_number == phone)
+            .first()
+        )
+        if not author:
+            return []
+        store = (
+            db.query(models.customer_store)
+            .filter(
+                models.customer_store.columns.store_id == author.id,
+                models.customer_store.columns.customer_id == order.where_id,
+            )
+            .first()
+        )
+        print(store)
+        if not store:
+            return []
+        executor = (
+            store.workers.
+            filter(models.Worker.id == order.executor_id)
+            .first()
+        )
+        print(executor, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        db_order = models.Order(
+            where=store,
+            author=author,
+            executor=executor
+        )
+        db.add(db_order)
+        db.commit()
+        db.refresh(db_order)
+        return db_order
+    except BaseException as e:
+        print(e)
+        return {"error": f"{e}"}

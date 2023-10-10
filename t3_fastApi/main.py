@@ -34,6 +34,17 @@ def read_order_by_phone(phone, skip: int = 0, limit: int = 100, db: Session = De
     orders = crud.get_orders_by_phone(phone, db, skip=skip, limit=limit)
     return orders
 
+
+@app.post("/order/{phone}", response_model=schemas.OrderCreate)
+def create_order_by_phone(
+        phone,
+        order: schemas.OrderCreate,
+        db: Session = Depends(get_db)
+):
+    orderr = crud.post_order_by_phone(phone, db=db, order=order)
+    return order
+
+
 #
 # @app.get("/store/", response_model=list[schemas.Store])
 # def read_store(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):

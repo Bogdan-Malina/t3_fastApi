@@ -51,11 +51,11 @@ class Store(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(sqlalchemy.String(255))
 
-    # workers: Mapped[List["Worker"]] = relationship(back_populates="store")
     workers: Mapped[List["Worker"]] = relationship(
-        secondary=worker_store, back_populates="stores"
+        secondary=worker_store,
+        back_populates="stores",
+        # lazy=True
     )
-    # customers: Mapped[List["Customer"]] = relationship(back_populates="store")
     customers: Mapped[List["Customer"]] = relationship(
         secondary=customer_store, back_populates="stores"
     )
@@ -71,13 +71,10 @@ class Customer(Base):
     name: Mapped[str] = mapped_column(sqlalchemy.String(255))
     phone_number: Mapped[str] = mapped_column(sqlalchemy.String(255))
 
-    # store_id: Mapped[int] = mapped_column(
-    #     sqlalchemy.ForeignKey("store_table.id"),
-    #     nullable=False
-    # )
-    # stores: Mapped[list["Store"]] = relationship(back_populates="customers")
     stores: Mapped[List["Store"]] = relationship(
-        secondary=customer_store, back_populates="customers"
+        secondary=customer_store,
+        back_populates="customers",
+        # lazy=True
     )
 
     def __str__(self):
@@ -91,8 +88,6 @@ class Worker(Base):
     name: Mapped[str] = mapped_column(sqlalchemy.String(255))
     phone_number: Mapped[str] = mapped_column(sqlalchemy.String(255))
 
-    # store_id: Mapped[int] = mapped_column(sqlalchemy.ForeignKey("store_table.id"))
-    # store: Mapped["Store"] = relationship(back_populates="workers")
     stores: Mapped[List["Store"]] = relationship(
         secondary=worker_store, back_populates="workers"
     )
@@ -116,9 +111,15 @@ class Order(Base):
         sqlalchemy.TIMESTAMP,
         default=datetime.utcnow
     )
-    close_date: Mapped[datetime] = mapped_column(sqlalchemy.TIMESTAMP)
+    close_date: Mapped[datetime] = mapped_column(
+        sqlalchemy.TIMESTAMP,
+        nullable=True
+    )
     status: Mapped[str] = mapped_column(
-        ChoiceType(STATUSES, impl=sqlalchemy.String())
+        ChoiceType(
+            STATUSES,
+            impl=sqlalchemy.String()
+        ), default=STATUSES[0][0]
     )
 
     where_id: Mapped[int] = mapped_column(sqlalchemy.ForeignKey("store_table.id"))

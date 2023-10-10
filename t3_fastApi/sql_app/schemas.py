@@ -64,7 +64,18 @@ class Store(StoreBase):
 
 
 class OrderCreate(OrderBase):
-    pass
+    where_id: int
+    # author_id: int
+    executor_id: int
+    # create_date: datetime
+    # close_date: datetime
+    # status: str
+
+    # @validator("status")
+    # @classmethod
+    # def chose_to_str(cls, v) -> str:
+    #     print(v)
+    #     return v.code
 
 
 class Order(OrderBase):
@@ -77,12 +88,12 @@ class Order(OrderBase):
 
     @validator("status")
     @classmethod
-    def double(cls, v) -> str:
+    def chose_to_str(cls, v) -> str:
         return v.code
 
     class Config:
         orm_mode = True
-        arbitrary_types_allowed = True
+        # arbitrary_types_allowed = True
 
     # class ItemBase(BaseModel):
 #     title: str
