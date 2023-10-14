@@ -1,8 +1,20 @@
 from flask import Flask
 from flask_admin import Admin
 
-from admin.models.admin_models import WorkerView, CustomerView, StoreView, OrderView, VisitView
-from database.models.models import Worker, Store, Customer, Order, Visit
+from admin.models.admin_models import (
+    WorkerView,
+    CustomerView,
+    StoreView,
+    OrderView,
+    VisitView
+)
+from database.models.models import (
+    Worker,
+    Store,
+    Customer,
+    Order,
+    Visit
+)
 
 
 def create_flask(db):

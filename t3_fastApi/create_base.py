@@ -98,9 +98,7 @@ def create_user(store, role_model):
 
 def create_orders(store):
     executor = random.choice(store.workers)
-    print(executor)
     customer = random.choice(store.customers)
-    print(customer)
     if customer and executor:
         order_create = models.Order(
             where=store,
@@ -125,8 +123,7 @@ with Session(engine) as session:
         try:
             session.add(create_stores())
             session.commit()
-        except Exception as e:
-            print(e)
+        except Exception:
             continue
     stores_list = session.query(models.Store).all()
     for i in range(300):
@@ -134,24 +131,22 @@ with Session(engine) as session:
             store_worker = random.choice(stores_list)
             session.add(create_user(store_worker, models.Worker))
             session.commit()
-        except Exception as e:
-            print(e)
+        except Exception:
             continue
     for i in range(300):
         try:
             store_customer = random.choice(stores_list)
             session.add(create_user(store_customer, models.Customer))
             session.commit()
-        except Exception as e:
-            print(e)
+        except Exception:
             continue
+    stores_list = session.query(models.Store).all()
     for i in range(200):
         try:
             store_order = random.choice(stores_list)
             session.add(create_orders(store_order))
             session.commit()
-        except Exception as e:
-            print(e)
+        except Exception:
             continue
     orders_list = session.query(models.Order).all()
     for i in orders_list:
@@ -159,6 +154,5 @@ with Session(engine) as session:
             order_visit = random.choice(orders_list)
             session.add(create_visits(order_visit))
             session.commit()
-        except Exception as e:
-            print(e)
+        except Exception:
             continue

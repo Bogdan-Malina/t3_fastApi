@@ -163,9 +163,15 @@ class Order(Base):
         default=Statuses.started
     )
 
-    where_id: Mapped[int] = mapped_column(sqlalchemy.ForeignKey("store_table.id"))
-    author_id: Mapped[int] = mapped_column(sqlalchemy.ForeignKey("customer_table.id"))
-    executor_id: Mapped[int] = mapped_column(sqlalchemy.ForeignKey("worker_table.id"))
+    where_id: Mapped[int] = mapped_column(
+        sqlalchemy.ForeignKey("store_table.id")
+    )
+    author_id: Mapped[int] = mapped_column(
+        sqlalchemy.ForeignKey("customer_table.id")
+    )
+    executor_id: Mapped[int] = mapped_column(
+        sqlalchemy.ForeignKey("worker_table.id")
+    )
 
     visit: Mapped["Visit"] = relationship(
         backref="order",
@@ -201,10 +207,18 @@ class Visit(Base):
         default=datetime.utcnow,
     )
 
-    executor_id: Mapped[int] = mapped_column(sqlalchemy.ForeignKey("worker_table.id"))
-    order_id: Mapped[int] = mapped_column(sqlalchemy.ForeignKey("order_table.id"))
-    author_id: Mapped[int] = mapped_column(sqlalchemy.ForeignKey("customer_table.id"))
-    where_id: Mapped[int] = mapped_column(sqlalchemy.ForeignKey("store_table.id"))
+    executor_id: Mapped[int] = mapped_column(
+        sqlalchemy.ForeignKey("worker_table.id")
+    )
+    order_id: Mapped[int] = mapped_column(
+        sqlalchemy.ForeignKey("order_table.id")
+    )
+    author_id: Mapped[int] = mapped_column(
+        sqlalchemy.ForeignKey("customer_table.id")
+    )
+    where_id: Mapped[int] = mapped_column(
+        sqlalchemy.ForeignKey("store_table.id")
+    )
 
     @validates("executor_id")
     def validate_executor(self, key, executor_id):
