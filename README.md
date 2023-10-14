@@ -31,7 +31,7 @@ docker exec -it <CONTAINER ID> bash
 ```
 Заполните базу данных
 ```
-python create_base.py
+poetry run python create_base.py
 ```
 
 ### Автор
