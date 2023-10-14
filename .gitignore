@@ -121,7 +121,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+t3_fastApi/database/.env
 .venv
 env/
 venv/
