@@ -149,9 +149,9 @@ with Session(engine) as session:
         except Exception:
             continue
     orders_list = session.query(models.Order).all()
-    for i in orders_list:
+    for i in range(100):
         try:
-            order_visit = random.choice(orders_list)
+            order_visit = orders_list[i]
             session.add(create_visits(order_visit))
             session.commit()
         except Exception:
